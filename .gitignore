@@ -1,0 +1,20 @@
+# Vi
+*~
+*.swp
+
+# LaTeX
+img/*.4og
+*.aux
+*.bbl
+*.blg
+*.idx
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.bib.bak
+X.tex
