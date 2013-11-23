@@ -1,5 +1,5 @@
-%\documentclass{beamer}
-\documentclass[handout]{beamer}
+\documentclass{beamer}
+%\documentclass[handout]{beamer}
 
 \usepackage[brazilian]{babel}
 \usepackage[utf8]{inputenc}
@@ -14,7 +14,7 @@
 
 \title{Desenvolvimento em comunidade}
 \subtitle{A história técnica e política de um plugin do WordPress}
-\author{Vinicius Massuchetto}
+\author{Vinicius Massuchetto \\ \texttt{http://vmassuchetto.github.io}}
 \date{}
 
 \lstset{%
@@ -53,7 +53,7 @@
 
   \vspace{0.1cm}
 
-  \url{http://tinyurl.com/latinoware-wp1}
+  \url{http://tinyurl.com/wcsp2013}
 
 \end{center}
 \end{frame}
@@ -82,8 +82,10 @@
 
 \begin{frame}{O que são plugins do WordPress?}
 \begin{itemize}
-  \pause \item Rotinas que mudam o comportamento padrão do WordPress, adicionando, removendo ou modificando suas funcionalidades
-  \pause \item Qualquer coisa que está no diretório \texttt{wp-content/plugins} e tem este cabeçalho:
+  \pause \item Rotinas que mudam o comportamento padrão do WordPress,
+    adicionando, removendo ou modificando suas funcionalidades
+  \pause \item Qualquer coisa que está no diretório \texttt{wp-content/plugins}
+    e tem este cabeçalho:
 \end{itemize}
 \end{frame}
 
@@ -107,7 +109,7 @@
 \begin{frame}{Falando em números: aspecto técnico}
 \begin{itemize}
   \pause \item 163 linhas
-  \pause \item 9 commits realizados
+  \pause \item 9 \emph{commits} realizados
   \pause \item 3 versões
   \pause \item 2 desenvolvedores
   \pause \item 1 plugin
@@ -116,8 +118,8 @@
 
 \begin{frame}{Falando em números: aspecto político}
 \begin{itemize}
-  \pause \item 189 mensagens trocadas no Trac e na wp-hackers
-  \pause \item 20 core patches propostos
+  \pause \item 189 mensagens trocadas no Trac e na lista wp-hackers
+  \pause \item 20 \emph{core patches} propostos
   \pause \item 10 propostas de usabilidade
   \pause \item 1 novo campo no admin
 \end{itemize}
@@ -134,8 +136,8 @@
 
 \begin{frame}{Causas dos problemas}
 \begin{itemize}
-  \pause \item Regra do confusa no controlador para a escolha de templates
-  \pause \item Terminologia conflituosa
+  \pause \item Regra confusa no controlador para a escolha dos templates
+  \pause \item Terminologia conflituosa entre \emph{home} e \emph{front page}
   \pause \item Alta sensibilidade às ações do usuário
 \end{itemize}
 \end{frame}
@@ -143,10 +145,22 @@
 \begin{frame}{Consequências dos problemas}
 \begin{itemize}
   \pause \item Temas construídos invariavelmente de forma errada
-  \pause \item Confusão evitável na documentação
+  \pause \item Confusão e verborragia evitável na documentação
   \pause \item Perda de visões de conteúdo
   \pause \item Visões de conteúdo não desejadas
-  \pause \item Sites fora do ar
+  \pause \item Escolha de templates não desejados
+  \pause \item Sites `fora do ar'
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Áreas envolvidas no processo decisório}
+\begin{itemize}
+  \pause \item Análise de requisitos -- implementações compatíveis e ajustáveis
+    com a necessidade do projeto
+  \pause \item Usabilidade na geração de conteúdo -- facilidade de treinamento
+    e manutenção do projeto em produção
+  \pause \item Agilidade de desenvolvimento -- tornar a vida do desenvolvedor
+    mais fácil
 \end{itemize}
 \end{frame}
 
@@ -179,7 +193,7 @@
 \begin{frame}{Exemplos de hierarquia de template: categoria}
 \begin{itemize}
   \pause \item \texttt{http://site/category/qualquer-categoria}
-  \pause \item $\rightarrow$ \texttt{category-minha-categoria.php} \\
+  \pause \item $\rightarrow$ \texttt{category-qualquer-categoria.php} \\
     \pause $\rightarrow$ \texttt{category-22.php} \\
     \pause $\rightarrow$ \texttt{category.php} \\
     \pause $\rightarrow$ \texttt{archive.php} \\
@@ -221,6 +235,12 @@
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\begin{center}
+  \includegraphics[width=\textwidth]{./img/template-hierarchy-front.png}
+\end{center}
+\end{frame}
+
 \begin{frame}{O problema das \emph{dummy pages}}
 \begin{itemize}
   \pause \item \texttt{int( get\_option( 'page\_on\_front' ) )} \\
@@ -235,19 +255,13 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-  \includegraphics[width=\textwidth]{./img/template-hierarchy-front.png}
-\end{center}
-\end{frame}
-
 \begin{frame}{Exemplos de hierarquia de template: página inicial}
 \begin{itemize}
   \pause \item \texttt{http://site/}
   \pause \item $\rightarrow$ (\texttt{p*-problema.php})
   \pause \item $\rightarrow$ \texttt{front-page.php}
   \pause \item $\rightarrow$ \texttt{home.php}
-  \pause \item $\rightarrow$ \texttt{index.php} $\star$ (?)
+  \pause \item $\rightarrow$ \texttt{index.php} $\star$ (!!!)
   \pause \item \ldots e vai ficar sem a listagem de posts principal
 \end{itemize}
 \end{frame}
@@ -257,13 +271,123 @@
   \pause \item Criação origatória das \emph{dummy pages} para ter a completude
     de funcionalidades para os templates
   \pause \item Solução sensível à interferência do usuário
+  \pause \item Recurso indesejado para boa parte dos sites com perfil comercial
+    e que se distanciem da dinâmica de blogs
 \end{itemize}
 \end{frame}
 
 \section{Solução diplomática}
 \subsection{Solução diplomática}
 
-\begin{frame}{Na wp-hackers}
+\begin{frame}{Nosso ponto de vista}
+\begin{itemize}
+  \pause \item O usuário deve ter acesso a algumas funcionalidades
+    administrativas ao mesmo tempo que não deve ser capaz de interferir na
+    estrutura lógica do site
+  \pause \item A decisão sobre a capacidade do usuário em ter acesso a
+    determinadas funcionalidades possivelmente desnecessárias deve estar sob
+    responsabilidade do desenvolvedor
+  \pause \item Quanto mais simples para o usuário, melhor
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Exemplos de funcionalidade suprimíveis nos temas}
+Função \texttt{add\_theme\_support()}
+\begin{itemize}
+  \pause \item \texttt{automatic-feed-links}: Referências para feeds na
+    \texttt{<head>}
+  \pause \item \texttt{post-thumbnails}: Campos de imagens destacadas nos posts
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Exemplos de funcionalidades suprimíveis nos temas}
+\begin{itemize}
+  \pause \item \texttt{add\_editor\_style()}: Aparência e funcionalidade do TinyMCE --
+    editor de conteúdo textual
+  \pause \item \texttt{add\_custom\_background()}: Controle do fundo do site
+  \pause \item \texttt{add\_custom\_image\_header()}: Controle da imagem do
+    cabeçalho
+  \pause \item \texttt{register\_nav\_menus()}: Distribuição de links ao longo
+    de menus
+  \pause \item \texttt{register\_sidebar()}: Distribuição de widgets sobre
+  certas áreas do site
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Nosso ponto de vista}
+\begin{itemize}
+  \pause \item Conteúdo e estrutura lógica devem ser coisas diferentes
+  \pause \item Funcionalidades que possibilitam a extensibilidade moderadamente
+    complexa do WordPress o popularizaram para a utilização em grandes serviços
+  \pause \item O WordPress só é o que é hoje porque pôde flexibilizar-se o
+    suficiente para ser aplicável às mais diversas situações, desde um simples
+    blog a mega portais.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Duas frentes de discussão}
+\begin{itemize}
+  \pause \item Discussões de funcionalidade na lista
+    \texttt{wp-hackers@lists.automattic.com}
+  \pause \item Implementação de patches e propostas de usabilidade no Trac do
+    core do WordPress
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+  \emph{``Eu acho que vocês estão se confundindo um pouco com a terminologia
+  home e front page.
+
+  \vspace{0.3cm}
+
+  \texttt{home.php} é o seu template para posts do blog (o seu \emph{archive}
+  para o post do tipo \emph{post}). É sempre usado quando \texttt{is\_home()} é
+  verdade, mesmo que esta não seja a página inicial do seu site. Você nunca
+  deveria ``colocar qualquer coisa que quisesse ali'' neste template. Ele serve
+  para mostrar os posts do seu blog.
+
+  \vspace{0.3cm}
+
+  \texttt{front-page.php} é para sobrescrever qualquer coisa que seja mostrada
+  na página inicial do site, independente de qualquer outra configuração.''}
+\end{center}
+\footnotesize{-- Justin Tadlock -- \emph{theme reviewer}}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+  \ldots problema entendido na discussão \ldots
+\end{center}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+  \emph{``Sou um ferrenho defensor de que os temas permaneçam em seu escopo
+  funcional: que é apresentar o conteúdo, e não definir ou gerenciar o conteúdo
+  e as opções do site.''}
+\end{center}
+\footnotesize{-- Chip Bennet-- \emph{theme reviewer}}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+  \emph{``Isto faz sentido quando você está fazendo um blog geral, mas não é
+  verdade quando você está fazendo um tema para um site especificadamente. Não
+  existe situação em que o administrador do site vai querer que a página
+  inicial mude.
+
+  \vspace{0.3cm}
+
+  Não é bom ter que explicar toda vez para o cliente: `Vê esta página qui? Ela
+  não tem conteúdo nenhum e qualquer coisa que você escrever nela não vai
+  aparecer em lugar nenhum, mas deixe ela aí porque se você removê-la vai
+  quebrar o seu site'.''}
+\end{center}
+\footnotesize{-- Leo Germani}
+\end{frame}
+
+\begin{frame}
 \begin{center}
   \emph{``Em um desenvolvimento encomendado, o desenvolvedor nada mais é do que
   um agente do usuário, que é o cliente. Não existe razão para o desenvolvedor,
@@ -277,12 +401,10 @@
   editar o que vai aparecer na capa do site seria danoso para esta grande
   maioria.''}
 \end{center}
-
--- Chip Bennett
-
+\footnotesize{-- Chip Bennett -- \emph{theme reviewer}}
 \end{frame}
 
-\begin{frame}{Na wp-hackers}
+\begin{frame}
 \begin{center}
   \emph{``Se você não quer o seu cliente mudando as opções do site, então não o
   cadastre como um admin.
@@ -294,56 +416,71 @@
   destas páginas avisando que elas servem para o que o Tema exiba as
   informações corretas.''}
 \end{center}
-
--- Bill Erickson
-
+\footnotesize{-- Bill Erickson -- \emph{freelancer}}
 \end{frame}
 
-\begin{frame}{Na wp-hackers}
+\begin{frame}
 \begin{center}
   \emph{``Eu acho que vocês não estão entendendo a questão do Chip sobre como
   os temas não devem ditar a estrutura do site para a grande maioria dos
-  usuários. É sobre quem controla o site, e não o tipo de site que é feito.}
+  usuários. É sobre quem controla o site, e não a finalidade do site.}
 \end{center}
-
--- Justin Tadlock
-
+\footnotesize{-- Justin Tadlock -- \emph{theme reviewer}}
 \end{frame}
 
 \begin{frame}
 \begin{center}
-  \includegraphics[width=\textwidth]{./img/proposal-dave-martin.png}
+  \includegraphics[height=0.6\textheight]{./img/proposal-dave-martin.png}
 \end{center}
-
--- Dave Martin
-
+\footnotesize{-- Dave Martin -- \emph{designer na Automattic}}
 \end{frame}
 
 \begin{frame}
 \begin{center}
-  \includegraphics[height=0.8\textheight]{./img/proposal-drew-jaynes.png}
+  \includegraphics[width=\textwidth]{./img/proposal-drew-jaynes.png}
 \end{center}
-
--- Drew Jaynes
-
+\footnotesize{-- Drew Jaynes -- \emph{freelancer}}
 \end{frame}
 
-\begin{frame}{No Trac}
+\begin{frame}
 \begin{itemize}
   \pause \item Jan 2011: Questão aberta por Mark Jaquith sobre a usabilidade
     desta seção do admin
   \pause \item Out 2012: Funcionalidade considerada crítica e de alta
     prioridade
   \pause \item Nov 2012: Complicações de usabilidade e urgência de liberação de
-    versões fazem as propostas de patches serem agendadas para um release
-    indefinido. ``Faço isso com peso no coração.'' -- Andrew Nacin, ao tirar a
-    funcionalidade da milestone
+    versões fazem as propostas de \emph{patches} serem agendadas para um
+    \emph{release} indefinido. ``Faço isso com peso no coração.'' -- Andrew
+    Nacin, ao retirar esta funcionalidade da \emph{milestone}
   \pause \item Jan 2013: Última resposta sobre esta questão
 \end{itemize}
 \end{frame}
 
 \section{Solução prática}
 \subsection{Solução prática}
+
+\begin{frame}{Funcionalidade esperada}
+\begin{itemize}
+  \pause \item Fazer com que o desenvolver use somente a \texttt{front-page.php}
+  \pause \item Se o \texttt{front-page.php} estiver criado, utiliza-o para a
+    capa do site e habilita-se uma nova URL para o índice de posts --
+    \texttt{/blog} por padrão
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Etapas de implementação}
+\begin{itemize}
+  \pause \item Desenhar uma estrutura base para o plugin
+  \pause \item Adicionar um campo no admin para que seja escolhida uma URL
+    que vai responder pela lista de posts
+  \pause \item Implementar as \emph{rewrite rules} para gerar as requisições
+    corretas para esta URL
+  \pause \item Suprimir a funcionalidade da opção \texttt{show\_on\_front} para
+    o caso de plugins e temas que a utilizem
+  \pause \item Definir funções auxiliares para que as URLs sejam utilizadas
+    pelo tema
+\end{itemize}
+\end{frame}
 
 \begin{frame}
   \pause \lstinputlisting[firstline=1,lastline=1]{./code/base-structure.php}
@@ -354,8 +491,8 @@
 \begin{frame}
   \pause \lstinputlisting[firstline=1,lastline=1]{./code/admin-field.php}
   \pause \lstinputlisting[firstline=2,lastline=4]{./code/admin-field.php}
-  \pause \lstinputlisting[firstline=5,lastline=7]{./code/admin-field.php}
-  \pause \lstinputlisting[firstline=8,lastline=12]{./code/admin-field.php}
+  \pause \lstinputlisting[firstline=5,lastline=16]{./code/admin-field.php}
+  \pause \lstinputlisting[firstline=17,lastline=19]{./code/admin-field.php}
 \end{frame}
 
 \begin{frame}
@@ -401,6 +538,9 @@
 \begin{itemize}
   \pause \item Antes de fazer um plugin que interfira no funcionamento
     estrutural do WordPress, verifique as discussões na comunidade e no Trac.
+  \pause \item Melhor do que esperar que a comunidade desenvolva, se o
+    própósito está claro e é útil para você, simplesmente faça o plugin ou
+    proponha o \emph{patch}
   \pause \item Uma funcionalidade simples pode vir a ser elaborada do ponto de
     vista técnico, e inviável do ponto de vista político
 \end{itemize}
